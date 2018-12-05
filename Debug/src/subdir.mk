@@ -4,12 +4,20 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/RangeFinder.cpp \
 ../src/cvrange.cpp 
 
+O_SRCS += \
+../src/RangeFinder.o \
+../src/RangeFinder2.o \
+../src/cvrange.o 
+
 OBJS += \
+./src/RangeFinder.o \
 ./src/cvrange.o 
 
 CPP_DEPS += \
+./src/RangeFinder.d \
 ./src/cvrange.d 
 
 

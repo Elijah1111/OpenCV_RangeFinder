@@ -40,8 +40,11 @@ endif
 # All Target
 all: cvrange
 
+dependents:
+	-cd /home/elijah/Desktop/Workspace/cvrange/Debug && $(MAKE) all
+
 # Tool invocations
-cvrange: $(OBJS) $(USER_OBJS)
+cvrange: $(OBJS) $(USER_OBJS) /home/elijah/Desktop/Workspace/cvrange/Debug/cvrange
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross G++ Linker'
 	g++ -L/usr/local/lib64 -o "cvrange" $(OBJS) $(USER_OBJS) $(LIBS)
@@ -54,5 +57,6 @@ clean:
 	-@echo ' '
 
 .PHONY: all clean dependents
+/home/elijah/Desktop/Workspace/cvrange/Debug/cvrange:
 
 -include ../makefile.targets

@@ -1,82 +1,148 @@
 #include <opencv2/opencv.hpp>
+#include <iostream>
+#include "RangeFinder.h"
 
 using namespace cv;
-int main( int argc, char** argv )
+using namespace std;
+int main()
 {
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Initialize Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Input Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	string dum;//made it a string to help prevent over-typing
 
-	Mat src;//Mat aka a matrix that represents the image
-	Mat gray;//a mat to store a gray scale of original
+	cout<<"Would you like to use the included images? Y/N: ";
 
-	src = imread("ham.jpg");//read the image in argument 1
+	cin>>dum;
+	cin.clear();
+	cin.sync();
+
+	cout<<"Press any button inside the image files to close them all."<<endl;
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Input Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-	if( argc != 2 || !src.data )//Can you read the image?
-	{
-		printf( "No image data \n" );
-		return -1;
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Default Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	if(dum=="Y"||dum=="y"){
+
+		RangeFinder range;
+		range.Begin();
+		cout<<fixed<<setprecision(2)<<range.getDistance()<<" inches from the object"<<endl;
+
 	}
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Initialize Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Default Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Split Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Dev Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	else if(dum=="z"){//Dev Mode Finds the Focal Length
+		string path;
+		double dist,width;
+		cout<<"Please specify your path to an image include the extension: ";
+		cin>>path;
 
-	Mat blue (src.rows, src.cols, CV_8UC3);
-	Mat green (src.rows, src.cols, CV_8UC3);
-	Mat red (src.rows, src.cols, CV_8UC3);
-
-	for (int i = 0; i < src.rows; i ++){//loops through the image and assigns the vector of color
-		for (int j = 0; j < src.cols; j ++){//this part grabs the vector that is the color 3 times then assigns part of it to be 0
-			Vec3b temp_blue;
-			temp_blue=src.at<Vec3b>(i,j); temp_blue[1] = 0; temp_blue[2] = 0;//only blue
-
-			Vec3b temp_green;
-			temp_green=src.at<Vec3b>(i,j); temp_green[0] = 0; temp_green[2] = 0;//only green
-
-			Vec3b temp_red;
-			temp_red=src.at<Vec3b>(i,j); temp_red[0] = 0; temp_red[1] = 0;//only red
-
-			blue.at<Vec3b>(i,j) = temp_blue;//assign blue vector to image
-			green.at<Vec3b>(i,j) = temp_green;//assign green vector to image
-			red.at<Vec3b>(i,j) = temp_red;//assign red vector to image
+		dist=-1;
+		cout<<"Please enter the distance from the object in inches: ";
+		while(dist<0){
+			while(!(cin >> dist)){
+				cin.clear();
+				cin.sync();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				cout << "Invalid input.  Try again: ";
+				dist=-1;
+				continue;
+			}
+			if(dist<0){
+				cout<<"Positive number please: ";
+			}
 		}
+
+		width=-1;
+
+		cout<<"Please enter the actual width of the object in inches: ";
+		while(width<0){
+			while(!(cin >> width)){
+
+				cin.clear();
+				cin.sync();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				cout << "Invalid input.  Try again: ";
+				width=-1;
+				continue;
+			}
+			if(width<0){
+				cout<<"Positive number please: ";
+			}
+		}
+
+
+
+		RangeFinder range(true,path,dist,width);
 	}
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Split Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Dev Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Manipulation Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	cvtColor( src, gray, CV_BGR2GRAY );//convert to greyscale
-	rectangle(gray,Point(0,0),Point(100,100),Scalar(255,0,0));
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DIY Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	else{
 
 
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Manipulation Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Display Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	imshow( "Display Original", src );
-	imshow( "Display Gray", gray );
-	imshow( "Display Blue", blue );//blue
-	imshow( "Display Green", green );//green
-	imshow( "Display Red", red );//red
-
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Display Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		string path;
+		double focal,width;
+		cout<<"Please specify your path to an image include the extension: ";
+		cin>>path;
 
 
 
+		focal=-1;
 
-	waitKey(0);//wait
+		cout<<"Please enter the focal length (pixels per inch) used to capture the image: ";
+		while(focal<0){
+			while(!(cin >> focal)){//gets and validates the focal length
+
+				cin.clear();
+				cin.sync();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				cout << "Invalid input.  Try again: ";
+				focal=-1;
+				continue;
+			}
+			if(focal<0){
+				cout<<"Positive number please: ";
+			}
+		}
+
+
+		width=-1;
+		cout<<"Please enter the actual width of the object in inches: ";
+		while(width<0){
+			while(!(cin >> width)){//gets and validates the width
+
+				cin.clear();
+				cin.sync();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				cout << "Invalid input.  Try again: ";
+				width=-1;
+				continue;
+			}
+			if(width<0){
+				cout<<"Positive number please: ";
+			}
+		}
+
+
+		RangeFinder range(path,focal,width);
+		range.Begin();
+		cout<<fixed<<setprecision(2)<<range.getDistance()<<" inches from the object"<<endl;
+
+
+	}
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DIY Zone~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+	waitKey(0);//wait for a key press to continue
+
 
 
 	return 0;
+
 }

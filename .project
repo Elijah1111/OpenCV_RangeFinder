@@ -3,6 +3,7 @@
 	<name>cvrange</name>
 	<comment></comment>
 	<projects>
+		<project>cvrange</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
